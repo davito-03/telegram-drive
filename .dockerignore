@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+.git/
+.env
+*.session
+*.session-journal
+downloads/
+*.db
+rclone.conf
