@@ -1,0 +1,12 @@
+services:
+  userbot-drive:
+    build: .
+    container_name: userbot-drive
+    restart: unless-stopped
+    env_file: .env
+    command: python userbot_drive.py
+    volumes:
+      - ./downloads:/app/downloads
+      - ./my_account.session:/app/my_account.session
+      - ./my_account.session-journal:/app/my_account.session-journal
+      - ./rclone.conf:/root/.config/rclone/rclone.conf:ro
