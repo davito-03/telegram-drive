@@ -208,11 +208,8 @@ from google.auth.transport.requests import Request
 # Cargar configuraciones (importamos del config.py del bot principal)
 from config import GDRIVE_FOLDER_ID
 
-# ─── CREDENCIALES DE DESARROLLO DE TELEGRAM ──────────────────────────────
-# ‼️ Reemplaza "TU_API_ID" y "TU_API_HASH" con los datos de my.telegram.org
 API_ID = os.environ.get("API_ID", "")
 API_HASH = os.environ.get("API_HASH", "")
-# ─────────────────────────────────────────────────────────────────────────
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("UserBotDrive")
@@ -1082,9 +1079,9 @@ async def resume_queue():
     asyncio.create_task(update_dashboard(force=True))
 
 async def main():
-    if API_ID == "TU_API_ID" or API_HASH == "TU_API_HASH":
-        print("🛑 ERROR: Debes editar userbot_drive.py y poner tu API_ID y API_HASH.")
-        exit(1)
+    if not str(API_ID).strip() or not str(API_HASH).strip() or API_ID == "TU_API_ID" or API_HASH == "TU_API_HASH":
+        print("🛑 ERROR: API_ID y API_HASH deben estar en el entorno (.env).")
+        raise SystemExit(1)
 
     print("🚀 Arrancando Userbot de descargas (VPS con cola persistente y panel de progreso)...")
     clean_temp_files()

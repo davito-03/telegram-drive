@@ -31,7 +31,7 @@ Saved Messages → cola en disco (queue.json, no un broker) → rclone
                                               ↘ Drive API resumable (fallback)
 ```
 
-La carpeta de Drive es `RCLONE_DEST` (env), no un path de homelab.
+La carpeta de Drive es `RCLONE_DEST` (env), no un path de homelab. El contenedor corre como uid 1000; `rclone.conf` se monta en `$HOME/.config/rclone/`.
 
 ```bash
 pytest

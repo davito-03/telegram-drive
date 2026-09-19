@@ -6,6 +6,9 @@ services:
     env_file: .env
     environment:
       PYTHONUNBUFFERED: "1"
+      HOME: /home/appuser
+      RCLONE_DEST: ${RCLONE_DEST:-gdrive:media}
+      QUEUE_FILE: /app/downloads/queue.json
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import queue_store; queue_store.load_queue()\""]
       interval: 30s
@@ -16,4 +19,4 @@ services:
       - ./downloads:/app/downloads
       - ./my_account.session:/app/my_account.session
       - ./my_account.session-journal:/app/my_account.session-journal
-      - ./rclone.conf:/root/.config/rclone/rclone.conf:ro
+      - ./rclone.conf:/home/appuser/.config/rclone/rclone.conf:ro
