@@ -20,30 +20,9 @@ import glob
 
 download_lock = asyncio.Lock()
 upload_semaphore = asyncio.Semaphore(5)
-QUEUE_FILE = "queue.json"
+from queue_store import load_queue, save_queue, add_to_queue, remove_from_queue
 
-def load_queue():
-    if os.path.exists(QUEUE_FILE):
-        try:
-            with open(QUEUE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-    return []
-
-def save_queue(queue):
-    with open(QUEUE_FILE, "w", encoding="utf-8") as f:
-        json.dump(queue, f, ensure_ascii=False, indent=2)
-
-def add_to_queue(task_dict):
-    q = load_queue()
-    q.append(task_dict)
-    save_queue(q)
-
-def remove_from_queue(task_id):
-    q = load_queue()
-    q = [x for x in q if x.get("task_id") != task_id]
-    save_queue(q)
+RCLONE_DEST = os.environ.get("RCLONE_DEST", "gdrive:media")
 
 DASHBOARD_STATE_FILE = "dashboard_state.json"
 _dashboard_lock = asyncio.Lock()
@@ -70,7 +49,7 @@ def save_dashboard_state(state):
 def get_drive_filenames():
     """Obtiene los nombres de archivos en la carpeta de películas de Google Drive usando rclone."""
     try:
-        res = subprocess.run(["rclone", "lsf", "gdrive:Jellyfin/Peliculas"], capture_output=True, text=True, timeout=40)
+        res = subprocess.run(["rclone", "lsf", RCLONE_DEST], capture_output=True, text=True, timeout=40)
         if res.returncode == 0:
             names = set()
             for line in res.stdout.splitlines():
@@ -274,8 +253,8 @@ _drive = _init_drive_service()
 
 def _upload_to_drive_rclone(filepath: str, filename: str) -> str | None:
     """Sube un archivo a Google Drive usando rclone (método preferido y más robusto)."""
-    dest = f"gdrive:Jellyfin/Peliculas/{filename}"
-    logger.info(f"🚀 [rclone] Subiendo '{filename}' a Google Drive (gdrive:Jellyfin/Peliculas)...")
+    dest = f"{RCLONE_DEST.rstrip('/')}/{filename}"
+    logger.info(f"🚀 [rclone] Subiendo '{filename}' a {RCLONE_DEST}...")
     cmd = [
         "rclone", "copyto",
         filepath,

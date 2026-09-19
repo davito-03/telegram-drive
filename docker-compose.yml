@@ -4,6 +4,13 @@ services:
     container_name: userbot-drive
     restart: unless-stopped
     env_file: .env
+    environment:
+      PYTHONUNBUFFERED: "1"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import queue_store; queue_store.load_queue()\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     command: python userbot_drive.py
     volumes:
       - ./downloads:/app/downloads

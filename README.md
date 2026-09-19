@@ -27,8 +27,14 @@ No es un bot de BotFather. Es una sesión de **usuario** (API_ID / API_HASH). El
 ## Flujo
 
 ```
-Saved Messages → cola (queue.json) → descarga local → rclone (primario)
+Saved Messages → cola en disco (queue.json, no un broker) → rclone
                                               ↘ Drive API resumable (fallback)
+```
+
+La carpeta de Drive es `RCLONE_DEST` (env), no un path de homelab.
+
+```bash
+pytest
 ```
 
 Pides el nombre del archivo antes de subir. No hay ffmpeg de recodificar: la calidad original se queda.
